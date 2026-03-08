@@ -4,6 +4,8 @@ import 'package:hungry_app/core/network/dio_client.dart';
 
 /// class ApiService for api calls in the app get , post , put , delete
 class ApiService {
+
+  // object of DioClient class for api calls from the app
   final DioClient _dioClient = DioClient();
 
   // 4 methods for api calls

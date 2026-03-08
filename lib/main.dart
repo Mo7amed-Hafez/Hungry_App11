@@ -10,17 +10,12 @@ import 'package:hungry_app/root.dart';
 import 'package:hungry_app/splash.dart';
 
 void main() async {
-
-  // علشان الشاشه تفضل بالطول 
+  // علشان الشاشه تفضل بالطول
   WidgetsFlutterBinding.ensureInitialized();
-  await SystemChrome.setPreferredOrientations(
-    [
-      DeviceOrientation.portraitUp,
-    ]
-  ); 
+  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
   // ⬆️
-  
+
   runApp(const MyApp());
 }
 

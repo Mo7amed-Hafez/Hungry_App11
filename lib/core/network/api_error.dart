@@ -7,7 +7,7 @@ class ApiError {
 
   @override
   String toString() {
-    return "error cuased by $message with status code $statusCode";
+    return  message ;
   }
 }
 // علشان لما يكون في مشكله اعرض لليوزر error message

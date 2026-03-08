@@ -46,3 +46,6 @@ app.*.map.json
 android/build/
 android/.gradle/
 ios/build/
+android/**/build/
+ios/**/build/
+build/

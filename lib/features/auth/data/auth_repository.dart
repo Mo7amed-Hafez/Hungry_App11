@@ -1,0 +1,61 @@
+import 'package:dio/dio.dart';
+import 'package:hungry_app/core/network/api_error.dart';
+import 'package:hungry_app/core/network/api_exceptions.dart';
+import 'package:hungry_app/core/network/api_service.dart';
+import 'package:hungry_app/core/utils/pref_helpers.dart';
+import 'package:hungry_app/features/auth/data/auth_model.dart';
+
+class AuthRepo {
+  // object of api service class for api calls
+  ApiService apiService = ApiService();
+
+  // Login
+  Future<UserModeL?> login(String email, String password) async {
+    // email , password from login screen Controllers
+    try {
+      final response = await apiService.post("/login", {
+        "email": email,
+        "password": password,
+      });
+
+      if (response is ApiError) {
+        throw response;
+      }
+      if (response is Map<String, dynamic>) {
+        final masg = response["message"];
+        final code = response["code"];
+        final data = response["data"];
+        
+        if (code != 200 || data == null){
+          throw ApiError(message: masg);
+        }
+        
+      final user = UserModeL.fromJson(response["data"]);
+      if (user.token != null) {
+        await PrefHelpers.saveToken(user.token!);
+      }
+
+      return user;
+
+      }
+      else{
+        throw ApiError(message: "Unexpected error from server");
+      }
+ // return user data for use it in the app
+    } on DioException catch (e) {
+      throw ApiExceptions.handleError(e);
+    } catch (e) {
+      throw ApiError(message: e.toString());
+    }
+  }
+
+  // Register
+
+  
+
+  // Get profile Data
+
+  //Update profile data
+
+  // Logout
+}
