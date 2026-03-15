@@ -1,9 +1,12 @@
 // ignore_for_file: must_be_immutable, unused_import
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:hungry_app/core/constants/app_colors.dart';
+import 'package:hungry_app/core/network/api_error.dart';
+import 'package:hungry_app/features/auth/data/auth_repository.dart';
 import 'package:hungry_app/features/auth/views/login_view.dart';
 import 'package:hungry_app/features/auth/widgets/custom_btn.dart';
 import 'package:hungry_app/shared/custom_text.dart';
@@ -26,6 +29,57 @@ class _SingnupViewState extends State<SingnupView> {
   TextEditingController confirmpassController = TextEditingController();
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+
+  // Logic for Singup
+ 
+  AuthRepo authRepo = AuthRepo();
+
+  bool isLoading = false;
+
+  Future<void> singnup() async{
+
+    if (!_formKey.currentState!.validate()) {
+    return;
+    }
+
+    setState(() => isLoading = true);
+
+
+
+    try{
+      final user = await authRepo.singnup(
+        nameController.text.trim(),
+        emailController.text.trim(),
+         passController.text.trim(),
+          ); 
+    
+    if(user !=null){
+      Navigator.pushReplacementNamed(context, '/root');
+    }
+
+    } 
+    catch(e){
+      String errorMsg = "Error in Signup";
+      if(e is ApiError){
+        errorMsg = e.message;
+      }
+
+          ScaffoldMessenger.of(context)
+        .showSnackBar(
+          SnackBar(content: CustomText(text: errorMsg,color: Colors.white,),
+          backgroundColor: const Color.fromARGB(255, 191, 64, 55),
+          elevation: 15,
+          ));
+
+  } finally {
+    // if error or success هتتنفذ 
+    // stop loading
+    setState(() => isLoading = false);
+  }
+      
+    }
+  
 
 
  // dispose function for controller to stop controlling and memory leak
@@ -92,14 +146,12 @@ void dispose(){
                           hint: "Password",
                         ),
                         Gap(20),
-          
-                        CustomAuthButton(
+                        isLoading
+                        ? CupertinoActivityIndicator(color: AppColors.primaryColor)
+                        
+                        :CustomAuthButton(
                           text: "SIGN UP",
-                          onTap: () {
-                            if (_formKey.currentState!.validate()) {
-                              print('success sign up');
-                            }
-                          },
+                          onTap: singnup,
                           color: AppColors.primaryColor,
                           textColor: Colors.white,
                         ),

@@ -33,7 +33,7 @@ class _LoginViewState extends State<LoginView> {
   AuthRepo authRepo = AuthRepo();
 
   // loding var
-  bool isLoading = false;
+  bool _isLoading = false;
 
  Future<void> login() async {
 
@@ -44,7 +44,7 @@ class _LoginViewState extends State<LoginView> {
   }
 
   // start loading first to get data from server
-  setState(() => isLoading = true);
+  setState(() => _isLoading = true);
 
   try {
     final user = await authRepo.login(
@@ -76,10 +76,16 @@ class _LoginViewState extends State<LoginView> {
   } finally {
     // if error or success هتتنفذ 
     // stop loading
-    setState(() => isLoading = false);
+    setState(() => _isLoading = false);
   }
 }
 
+@override
+  void initState() {
+    super.initState();
+    emailController.text = 'mohamed50@gmail.com';
+    passController.text = '123456789';
+  }
   @override
   void dispose() {
     emailController.dispose();
@@ -133,9 +139,8 @@ class _LoginViewState extends State<LoginView> {
                         ),
                         Gap(20),
 
-                        isLoading
+                        _isLoading
                         ? CupertinoActivityIndicator(color: AppColors.primaryColor)
-                        // ? CircularProgressIndicator(color: AppColors.primaryColor)
                         : CustomAuthButton(
                           text: "Login",
                           onTap: login,

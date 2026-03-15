@@ -11,6 +11,7 @@ class DioClient {
       headers: {
         // headers are map of key and value
         "content-type": "application/json",
+        "Accept": "application/json",
       },
     ),
   );
@@ -26,7 +27,8 @@ class DioClient {
           // ignore: unnecessary_null_comparison
           if (token != null && token.isNotEmpty) {
             options.headers["Authorization"] =
-                "Bearer $token"; // bearer token نوعها و بنعلافها من postman
+                "Bearer $token"; // bearer token
+                //  نوعها و بنعرفها من postman
           }
           return handler.next(options);
         },
