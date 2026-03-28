@@ -74,7 +74,7 @@ class _HomeViewState extends State<HomeView> {
                       child: CardItem(
                         image: 'assets/test/image 6.png',
                         title: "Burger King",
-                        desc: "fast food with a lot of cheese",
+                        desc: "fast food with a lot of cheese and meat and a lot of cheese and meat",
                         rate: "4.5",
                       ),
                     );
@@ -84,7 +84,7 @@ class _HomeViewState extends State<HomeView> {
                   crossAxisCount: 2,
                   mainAxisSpacing: 10,
                   crossAxisSpacing: 10,
-                  childAspectRatio: 0.73,
+                  childAspectRatio: 0.8,
                 ),
               ),
             ),

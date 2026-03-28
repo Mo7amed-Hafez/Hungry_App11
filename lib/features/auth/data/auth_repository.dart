@@ -48,8 +48,8 @@ class AuthRepo {
     }
   }
 
-  // Signup
 
+  // Signup
   Future<UserModeL?> singnup(String name, String email, String password) async {
     try {
       final response = await apiService.post('/register', {
@@ -92,22 +92,73 @@ class AuthRepo {
     }
   }
 
-  // Get profile Data
 
+  // Get profile Data
   Future<UserModeL?> getProfileData() async {
     try {
       final response = await apiService.get('/profile');
       return UserModeL.fromJson(response["data"]);
-    } 
-    on DioException catch (e) {
+    } on DioException catch (e) {
       throw ApiExceptions.handleError(e);
-    }
-     catch (e) {
+    } catch (e) {
       throw ApiError(message: e.toString());
     }
   }
 
+  
   //Update profile data
+  Future<UserModeL?> updateProfileData({
+    required String name,
+    required String email,
+    String? address,
+    String? visa,
+    String? imagePath,
+  }) async {
+    try {
+      final formData = FormData.fromMap({
+        'name': name,
+        'email': email,
+        'address': address,
+        if (visa != null && visa.isNotEmpty) 'visa': visa,
+        if (imagePath != null && imagePath.isNotEmpty)
+          'image': await MultipartFile.fromFile(
+            imagePath,
+            filename: "profile.jpg",
+          ),
+        // 'image': imagePath ,
+      });
+      final response = await apiService.post('/update-profile', formData);
+      if (response is ApiError) {
+        throw response;
+      }
+       if (response is Map<String, dynamic>) {
+        final masg = response["message"];
+        final code = response["code"];
+        final codestate = int.tryParse(
+          code,
+        ); // علشان نحوله الكود الى عدد ليتعرف عليه في الشرط
+        final data = response["data"];
+
+        if (codestate != 200 && codestate != 201 || data == null) {
+          throw ApiError(message: masg ?? "Unexpected error from server");
+        }
+
+        final user = UserModeL.fromJson(response["data"]);
+        if (user.token != null) {
+          await PrefHelpers.saveToken(user.token!);
+        }
+
+        // return user data after register and save token if not error
+        return UserModeL.fromJson(data);
+      } else {
+        throw ApiError(message: "Unexpected error from server");
+      }
+    } on DioException catch (e) {
+      throw ApiExceptions.handleError(e);
+    } catch (e) {
+      throw ApiError(message: e.toString());
+    }
+  }
 
   // Logout
 }

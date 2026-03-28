@@ -1,5 +1,6 @@
 // ignore_for_file: unused_import
 
+import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -8,8 +9,10 @@ import 'package:hungry_app/core/network/api_error.dart';
 import 'package:hungry_app/features/auth/data/auth_model.dart';
 import 'package:hungry_app/features/auth/data/auth_repository.dart';
 import 'package:hungry_app/features/auth/widgets/custom_user_field.dart';
+import 'package:hungry_app/shared/custom_button.dart';
 import 'package:hungry_app/shared/custom_text.dart';
 import 'package:hungry_app/features/auth/views/login_view.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 class ProfileView extends StatefulWidget {
@@ -28,18 +31,31 @@ class _ProfileViewState extends State<ProfileView> {
   // Logic for Profile
   UserModeL? userModeL; // for user data from api server
   AuthRepo authRepo = AuthRepo();
+  bool isLoading = false;
 
   Future<void> getProfileData() async {
     try {
       final user = await authRepo.getProfileData();
+
+      if (!mounted) return;
+
       setState(() {
-        userModeL = user; // علشان نعرف نستخدمه في ال ui
+        userModeL = user;
+
+        _nameController.text = user?.name ?? 'User Name';
+        _emailController.text = user?.email ?? 'MAFIA@example.com';
+        _addressController.text = user?.address ?? 'location as Egypt';
+        // _addCreditController.text = user?.visa ?? '**** **** **** ****';
       });
     } catch (e) {
+      if (!mounted) return;
+
       String errorMsg = "Error in Profile";
       if (e is ApiError) {
         errorMsg = e.message;
+        print(e.message);
       }
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: CustomText(text: errorMsg, color: Colors.white),
@@ -50,16 +66,70 @@ class _ProfileViewState extends State<ProfileView> {
     }
   }
 
+
+  // logic for update profile
+  Future<void> updateProfile() async {
+    try {
+      setState(() => isLoading = true);
+      final user = await authRepo.updateProfileData(
+        name: _nameController.text.trim(),
+        email: _emailController.text.trim(),
+        address: _addressController.text.trim(),
+        visa: _addCreditController.text.trim(),
+        imagePath: selectedImage,
+      );
+      setState(() => isLoading = false);
+      if (!mounted) return;
+
+      setState(() {
+        userModeL = user;
+      });
+      await getProfileData();
+    } catch (e) {
+      setState(() => isLoading = false);
+      if (!mounted) return;
+
+      String errorMsg = "Error in Profile";
+      if (e is ApiError) {
+        errorMsg = e.message;
+        print(e.message);
+      }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: CustomText(text: errorMsg, color: Colors.white),
+          backgroundColor: const Color.fromARGB(255, 191, 64, 55),
+          elevation: 15,
+        ),
+      );
+    }
+  }
+
+  // Logic for Upload image Profile
+
+  String? selectedImage;
+  Future<void> uploadImage() async {
+    final pickedImage = await ImagePicker().pickImage(
+      source: ImageSource.gallery,
+    );
+    if (pickedImage != null) {
+      setState(() {
+        selectedImage = pickedImage.path;
+      });
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     // get profile data from server and set it to controller
-    getProfileData().then((doo) {
-      _nameController.text = userModeL?.name ?? 'User Name';
-      _emailController.text = userModeL?.email ?? 'MAFIA@example.com';
-      _addressController.text = userModeL?.address ?? 'location as Egypt';
-      _addCreditController.text = userModeL?.visa ?? '**** **** **** ****';
-    });
+    getProfileData();
+    // .then((doo) {
+    //   _nameController.text = userModeL?.name ?? 'User Name';
+    //   _emailController.text = userModeL?.email ?? 'MAFIA@example.com';
+    //   _addressController.text = userModeL?.address ?? 'location as Egypt';
+    //   _addCreditController.text = userModeL?.visa ?? '**** **** **** ****';
+    // });
   }
 
   @override
@@ -112,21 +182,64 @@ class _ProfileViewState extends State<ProfileView> {
                       Gap(20),
 
                       // profile image
-                      Container(
-                        height: 130,
-                        width: 130,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(color: Colors.white, width: 3),
-                          image:
-                              userModeL?.image != null &&
-                                  userModeL!.image!.isNotEmpty
-                              ? DecorationImage(
-                                  image: NetworkImage(userModeL!.image!),
-                                  fit: BoxFit.cover,
-                                )
-                              : null,
-                        ),
+                      Stack(
+                        clipBehavior: Clip.none,
+                        children: [
+                          
+                          Container(
+                            height: 130,
+                            width: 130,
+                            clipBehavior: Clip.antiAlias,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(color: Colors.white, width: 3),
+                              image: DecorationImage(
+                                fit: BoxFit.cover,
+                                image: selectedImage != null
+                                    ? FileImage(
+                                        File(selectedImage!),
+                                      ) // ✅ من الجهاز
+                                    : (userModeL?.image != null &&
+                                              userModeL!.image!.isNotEmpty
+                                          ? NetworkImage(
+                                              userModeL!.image!,
+                                            ) // ✅ من السيرفر
+                                          : AssetImage(
+                                                  "assets/images/profile.jpg",
+                                                ) // ✅ default
+                                                as ImageProvider),
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                            top: -27,
+                            right: 0,
+                            left: 87,
+
+                            // Edit button for image profile
+                            child: IconButton(
+                              onPressed: () {},
+                              icon: Icon(
+                                Icons.highlight_remove_outlined,
+                                color: Colors.white,
+                                size: 30,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      // Edit button for image profile
+                      Gap(15),
+                      CustomButton(
+                        title: "Upload Image",
+                        onTap: uploadImage,
+                        color: Colors.white,
+                        textColor: AppColors.primaryColor,
+                        width: 150,
+                        height: 40,
+                        borderRadius: 25,
+                        fontWeight: FontWeight.bold,
                       ),
                       Gap(40),
 
@@ -179,14 +292,39 @@ class _ProfileViewState extends State<ProfileView> {
                                     "**** **** **** ****",
                                 color: Colors.black,
                               ),
-
+   
+                              // minLeadingWidth: 100,
                               leading: Image.asset(
                                 "assets/cash/visaLogo.png",
                                 width: 50,
                               ),
-                              trailing: CustomText(
-                                text: "Default",
-                                color: Colors.black,
+                              trailing: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Container(
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 10,
+                                      vertical: 5,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: const Color.fromARGB(255, 72, 67, 67),
+                                      borderRadius: BorderRadius.circular(25),
+                                    ),  
+                                    child: CustomText(
+                                      text: "Default",
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  IconButton(
+                                    onPressed: () {},
+                                    icon: Icon(
+                                      Icons.delete_rounded,
+                                      color: Colors.red,
+                                      size: 30,
+                                    ),
+                                  ),
+                                ],
                               ),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
@@ -224,9 +362,10 @@ class _ProfileViewState extends State<ProfileView> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                // edit button
-                InkWell(
-                  onTap: () {},
+                isLoading // edit button
+                ? CupertinoActivityIndicator(color: AppColors.primaryColor)
+                :InkWell(
+                  onTap: updateProfile,
                   child: Container(
                     padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
                     decoration: BoxDecoration(

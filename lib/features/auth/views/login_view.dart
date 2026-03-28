@@ -35,16 +35,14 @@ class _LoginViewState extends State<LoginView> {
   // loding var
   bool _isLoading = false;
 
- Future<void> login() async {
-
-  // check form validation first before sending request to server
+Future<void> login() async {
   if (!_formKey.currentState!.validate()) {
     return;
-    // if is validate return it and not send request to server and ont error server but validation error
   }
 
-  // start loading first to get data from server
-  setState(() => _isLoading = true);
+  if (mounted) {
+    setState(() => _isLoading = true);
+  }
 
   try {
     final user = await authRepo.login(
@@ -52,13 +50,15 @@ class _LoginViewState extends State<LoginView> {
       passController.text.trim(),
     );
 
-      // if user is not null navigate to root 
-      // اي يوجد مستخدم
+    if (!mounted) return; // 🔥 مهم جدا
+
     if (user != null) {
       Navigator.pushReplacementNamed(context, '/root');
     }
 
   } catch (e) {
+
+    if (!mounted) return; // 🔥 مهم جدا
 
     String errorMsg = "unknown error";
 
@@ -66,24 +66,28 @@ class _LoginViewState extends State<LoginView> {
       errorMsg = e.message;
     }
 
-    ScaffoldMessenger.of(context)
-        .showSnackBar(
-          SnackBar(content: CustomText(text: errorMsg,color: Colors.white,),
-          backgroundColor: const Color.fromARGB(255, 191, 64, 55),
-          elevation: 15,
-          ));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: CustomText(
+          text: errorMsg,
+          color: Colors.white,
+        ),
+        backgroundColor: Color.fromARGB(255, 191, 64, 55),
+        elevation: 15,
+      ),
+    );
 
   } finally {
-    // if error or success هتتنفذ 
-    // stop loading
-    setState(() => _isLoading = false);
+    if (mounted) {
+      setState(() => _isLoading = false);
+    }
   }
 }
 
 @override
   void initState() {
     super.initState();
-    emailController.text = 'mohamed50@gmail.com';
+    emailController.text = 'mafia159@gmail.com';
     passController.text = '123456789';
   }
   @override
@@ -103,6 +107,7 @@ class _LoginViewState extends State<LoginView> {
           child: Form(
             key: _formKey,
             child: Column(
+              
               children: [
                 Gap(70),
                 SvgPicture.asset("assets/images/logo.svg"),
@@ -125,6 +130,7 @@ class _LoginViewState extends State<LoginView> {
                       ),
                     ),
                     child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         CustomTextform(
                           controller: emailController,

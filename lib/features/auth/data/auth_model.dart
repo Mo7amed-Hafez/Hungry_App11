@@ -22,7 +22,7 @@ class UserModeL {
       image: json["image"] ?? "",
       address: json["address"] ?? "",
       token: json["token"] ?? "",
-      visa: json["Visa"] ?? "",
+      visa: json["Visa"]?.toString() ?? "",
     );
   }
 }
