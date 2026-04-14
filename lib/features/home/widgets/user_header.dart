@@ -15,7 +15,7 @@ class UserHeader extends StatefulWidget {
 class _UserHeaderState extends State<UserHeader> {
   @override
   Widget build(BuildContext context) {
-    return  Row(
+    return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Column(

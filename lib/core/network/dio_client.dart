@@ -17,18 +17,23 @@ class DioClient {
   );
 
   DioClient() {
+    // for Debuging Dio Requests in data 
+    dio.interceptors.add(
+      LogInterceptor(
+        requestBody: true,
+        responseBody: true,
+      )
+    );
     dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) async {
-
-            // get token from shared preferences
+          // get token from shared preferences
           final token = await PrefHelpers.getToken();
 
           // ignore: unnecessary_null_comparison
-          if (token != null && token.isNotEmpty) {
-            options.headers["Authorization"] =
-                "Bearer $token"; // bearer token
-                //  نوعها و بنعرفها من postman
+          if (token != null && token.isNotEmpty && token != 'guest') {
+            options.headers["Authorization"] = "Bearer $token"; // bearer token
+            //  نوعها و بنعرفها من postman
           }
           return handler.next(options);
         },

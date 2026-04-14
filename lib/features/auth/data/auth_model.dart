@@ -16,6 +16,9 @@ class UserModeL {
   });
 
   factory UserModeL.fromJson(Map<String,dynamic> json){
+    print("JSON DATA: $json");
+    // ignore: unused_element
+    String parseToString(dynamic value) => value?.toString() ?? "";
     return UserModeL(
       name: json["name"]?? "",
       email: json["email"] ?? "",

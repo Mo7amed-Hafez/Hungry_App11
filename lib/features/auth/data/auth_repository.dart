@@ -9,6 +9,10 @@ class AuthRepo {
   // object of api service class for api calls
   ApiService apiService = ApiService();
 
+  // As a Guest
+  bool isGuest = false;
+  UserModeL? _currentUser;
+
   // Login
   Future<UserModeL?> login(String email, String password) async {
     // email , password from login screen Controllers
@@ -30,24 +34,25 @@ class AuthRepo {
         if (code != 200 || data == null) {
           throw ApiError(message: masg);
         }
-        // handle success from server to get user data and token
-        final user = UserModeL.fromJson(response["data"]);
-        if (user.token != null) {
-          await PrefHelpers.saveToken(user.token!);
+        // handle success from server to get updateUser data and token
+        final updateUser = UserModeL.fromJson(response["data"]);
+        if (updateUser.token != null) {
+          await PrefHelpers.saveToken(updateUser.token!);
         }
-
-        return user;
+        isGuest = false;
+        _currentUser =
+            updateUser; // علشان نخزن معلومات اليوزر محليا في الهاتف قبل تسجيل الدخول
+        return updateUser;
       } else {
         throw ApiError(message: "Unexpected error from server");
       }
-      // return user data for use it in the app
+      // return updateUser data for use it in the app
     } on DioException catch (e) {
       throw ApiExceptions.handleError(e);
     } catch (e) {
       throw ApiError(message: e.toString());
     }
   }
-
 
   // Signup
   Future<UserModeL?> singnup(String name, String email, String password) async {
@@ -73,13 +78,14 @@ class AuthRepo {
           throw ApiError(message: masg ?? "Unexpected error from server");
         }
 
-        final user = UserModeL.fromJson(response["data"]);
-        if (user.token != null) {
-          await PrefHelpers.saveToken(user.token!);
+        final updateUser = UserModeL.fromJson(response["data"]);
+        if (updateUser.token != null) {
+          await PrefHelpers.saveToken(updateUser.token!);
         }
-
-        // return user data after register and save token if not error
-        return user;
+        isGuest = false;
+        _currentUser = updateUser;
+        // return updateUser data after register and save token if not error
+        return updateUser;
       } else {
         throw ApiError(message: "Unexpected error from server");
       }
@@ -92,12 +98,18 @@ class AuthRepo {
     }
   }
 
-
   // Get profile Data
   Future<UserModeL?> getProfileData() async {
     try {
+      final token = await PrefHelpers.getToken();
+      if (token == null || token == 'guest') {
+        // isGuest = true;
+        return null;
+      }
       final response = await apiService.get('/profile');
-      return UserModeL.fromJson(response["data"]);
+      final updateUser = UserModeL.fromJson(response["data"]);
+      _currentUser = updateUser;
+      return updateUser;
     } on DioException catch (e) {
       throw ApiExceptions.handleError(e);
     } catch (e) {
@@ -105,7 +117,6 @@ class AuthRepo {
     }
   }
 
-  
   //Update profile data
   Future<UserModeL?> updateProfileData({
     required String name,
@@ -131,7 +142,7 @@ class AuthRepo {
       if (response is ApiError) {
         throw response;
       }
-       if (response is Map<String, dynamic>) {
+      if (response is Map<String, dynamic>) {
         final masg = response["message"];
         final code = response["code"];
         final codestate = int.tryParse(
@@ -143,13 +154,13 @@ class AuthRepo {
           throw ApiError(message: masg ?? "Unexpected error from server");
         }
 
-        final user = UserModeL.fromJson(response["data"]);
-        if (user.token != null) {
-          await PrefHelpers.saveToken(user.token!);
+        final updateUser = UserModeL.fromJson(response["data"]);
+        if (updateUser.token != null) {
+          await PrefHelpers.saveToken(updateUser.token!);
         }
-
-        // return user data after register and save token if not error
-        return UserModeL.fromJson(data);
+        _currentUser = updateUser;
+        // return updateUser data after register and save token if not error
+        return updateUser;
       } else {
         throw ApiError(message: "Unexpected error from server");
       }
@@ -161,4 +172,53 @@ class AuthRepo {
   }
 
   // Logout
+  Future<void> logout() async {
+    final response = await apiService.post('/logout', {});
+    if (response is ApiError) {
+      throw response;
+    }
+    if (response["data"] != null) {
+      throw ApiError(message: "Unexpected error from server");
+    }
+    await PrefHelpers.removeToken(); // علشان احذف التوكن بعد تسجيل الخروج من التطبيق
+    _currentUser = null;
+    isGuest = true;
+  }
+
+  // Auto login 
+  // use in Splash Screen
+ Future<UserModeL?> autoLogin() async {
+  final token = await PrefHelpers.getToken();
+
+  if (token == null || token == 'guest') {
+    isGuest = true;
+    _currentUser = null;
+    return null;
+  }
+
+  try {
+    final user = await getProfileData();
+    _currentUser = user;
+
+    // ✅ أهم سطر
+    isGuest = false;
+
+    return user;
+  } catch (_) {
+    await PrefHelpers.removeToken();
+    isGuest = true;
+    _currentUser = null;
+    return null;
+  }
+}
+
+  // Continue as guest
+  Future<void> continueAsGuest() async {
+    isGuest = true;
+    _currentUser = null;
+    await PrefHelpers.saveToken('guest');
+  }
+
+  UserModeL ? get currentUser => _currentUser;
+  bool get isLogedIn => !isGuest && _currentUser != null;
 }

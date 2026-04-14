@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hungry_app/shared/custom_text.dart';
 
+// المارد اللي في الصفحة الرئيسية اللي فيها الاكل
 class CardItem extends StatelessWidget {
   const CardItem({
     super.key,
@@ -31,8 +32,19 @@ class CardItem extends StatelessWidget {
         elevation: 10,
 
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            gradient: LinearGradient(
+              colors: [
+                const Color.fromARGB(255, 240, 216, 214),
+                const Color.fromARGB(255, 158, 97, 97),
+              ],
+              end: Alignment.topLeft,
+              begin: Alignment.bottomRight,
+            ),
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

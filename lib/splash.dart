@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
 import 'package:hungry_app/core/constants/app_colors.dart';
+import 'package:hungry_app/core/utils/pref_helpers.dart';
+import 'package:hungry_app/features/auth/data/auth_repository.dart';
+import 'package:hungry_app/features/auth/views/login_view.dart';
+import 'package:hungry_app/root.dart';
 
 class SplashView extends StatefulWidget {
   const SplashView({super.key});
@@ -12,15 +16,24 @@ class SplashView extends StatefulWidget {
 
 class _SplashViewState extends State<SplashView>
     with SingleTickerProviderStateMixin {
+  final AuthRepo authRepo = AuthRepo();
+
   late AnimationController _controller;
   late Animation<double> _fadeAnimation;
   late Animation<double> _scaleAnimation;
   late Animation<Offset> _slideAnimation;
 
   @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   void initState() {
     super.initState();
 
+    // 🎬 Animations
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1200),
@@ -29,7 +42,10 @@ class _SplashViewState extends State<SplashView>
     _fadeAnimation =
         CurvedAnimation(parent: _controller, curve: Curves.easeIn);
 
-    _scaleAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
+    _scaleAnimation = Tween<double>(
+      begin: 0.8,
+      end: 1.0,
+    ).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeOutBack),
     );
 
@@ -42,16 +58,50 @@ class _SplashViewState extends State<SplashView>
 
     _controller.forward();
 
-    Future.delayed(
-      const Duration(seconds: 4),
-      () => Navigator.pushReplacementNamed(context, "/login"),
-    );
+    // ⏳ بعد 3 ثواني
+    Future.delayed(const Duration(seconds: 3),
+      _checkLogin);
   }
 
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
+  // 🔥 Auto Login Logic
+  Future<void> _checkLogin() async {
+    try {
+      // ⛔ لو الصفحة اتقفلت متكملش
+      if (!mounted) return;
+
+      // 🟢 جيب التوكن الأول
+      final token = await PrefHelpers.getToken();
+      print("TOKEN => $token");
+
+      // 🧠 تحديد الوجهة
+      Widget nextScreen;
+
+      if (authRepo.isGuest) {
+        nextScreen =  Root();
+      } else if (token != null) {
+        nextScreen =  Root();
+      } else {
+        nextScreen = const LoginView();
+      }
+
+      // 🔁 Navigation
+      if (mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => nextScreen),
+        );
+      }
+    } catch (e) {
+      print("Error in Splash => ${e.toString()}");
+
+      // fallback لو حصل error
+      if (mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const LoginView()),
+        );
+      }
+    }
   }
 
   @override
@@ -63,7 +113,7 @@ class _SplashViewState extends State<SplashView>
           children: [
             const Gap(200),
 
-            /// Logo Animation
+            /// 🔷 Logo Animation
             FadeTransition(
               opacity: _fadeAnimation,
               child: ScaleTransition(
@@ -77,7 +127,7 @@ class _SplashViewState extends State<SplashView>
 
             const Spacer(),
 
-            /// Bottom Image Animation
+            /// 🔷 Bottom Image Animation
             SlideTransition(
               position: _slideAnimation,
               child: FadeTransition(
