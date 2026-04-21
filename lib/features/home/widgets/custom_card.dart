@@ -48,7 +48,10 @@ class CardItem extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Center(child: Image.asset(image, width: 120)),
+              Flexible(
+                child: Center(
+                  child: Image.network(image, width: 120)),
+              ),
               Gap(10),
               CustomText(
                 text: title,
