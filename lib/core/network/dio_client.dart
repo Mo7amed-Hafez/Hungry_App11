@@ -24,6 +24,8 @@ class DioClient {
         responseBody: true,
       )
     );
+
+    // for adding token to headers in every request 
     dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) async {

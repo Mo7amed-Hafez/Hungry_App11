@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hungry_app/core/constants/app_colors.dart';
@@ -10,57 +11,138 @@ class OrderHistoryView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.backgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        toolbarHeight: 0,
+        backgroundColor: AppColors.backgroundColor,
+        elevation: 0,
         scrolledUnderElevation: 0,
+        centerTitle: true,
+        title: const CustomText(
+          text: "Order History",
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+          color: AppColors.textPrimary,
+        ),
       ),
-
       body: ListView.builder(
-        itemCount: 6,
-        physics: const BouncingScrollPhysics(), // smooth scrolling
-        padding: EdgeInsets.symmetric(vertical: 15, horizontal: 5),
+        itemCount: 5,
+        physics: const BouncingScrollPhysics(),
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 18),
         itemBuilder: (context, index) {
           return Container(
             width: double.infinity,
-            margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-            padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+            margin: const EdgeInsets.only(bottom: 16),
+            padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
               color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: AppColors.borderLight, width: 1.5),
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.primaryColor,
-                  blurRadius: 5,
-                  offset: Offset(3,3),
+                  color: Colors.black.withValues(alpha: 0.04),
+                  blurRadius: 14,
+                  offset: const Offset(0, 4),
                 ),
               ],
             ),
             child: Column(
               children: [
+                /// Order Header ID & Status Badge
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    // image
-                    Image.asset("assets/test/image 6.png", height: 100),
-      
-                    // details
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        CustomText(text: "Spicy Burger"),
-                        CustomText(text: "Qty: 2"),
-                        CustomText(text: "Price: 5\$"),
-                      ],
+                    CustomText(
+                      text: "Order #${1040 + index}",
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.textPrimary,
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: AppColors.success.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Row(
+                        children: const [
+                          Icon(
+                            CupertinoIcons.checkmark_circle_fill,
+                            size: 14,
+                            color: AppColors.success,
+                          ),
+                          SizedBox(width: 4),
+                          CustomText(
+                            text: "Delivered",
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.success,
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
-      
-                Gap(20),
+                const Gap(12),
+                const Divider(height: 1, color: AppColors.borderLight),
+                const Gap(12),
+
+                /// Order Content Info
+                Row(
+                  children: [
+                    Container(
+                      width: 75,
+                      height: 75,
+                      padding: const EdgeInsets.all(6),
+                      decoration: BoxDecoration(
+                        color: AppColors.primarySoft,
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Image.asset(
+                        "assets/test/image 6.png",
+                        fit: BoxFit.contain,
+                      ),
+                    ),
+                    const Gap(14),
+
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: const [
+                          CustomText(
+                            text: "Spicy Deluxe Burger",
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.textPrimary,
+                          ),
+                          Gap(4),
+                          CustomText(
+                            text: "Quantity: 2 items",
+                            fontSize: 13,
+                            color: AppColors.textSecondary,
+                          ),
+                          Gap(4),
+                          CustomText(
+                            text: "Total Price: \$ 20.50",
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.primaryColor,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+
+                const Gap(16),
+
+                /// Reorder Action Button
                 CustomButton(
-                  title: "Reorder",
+                  title: "Reorder Meal",
                   width: double.infinity,
-                  height: 60,
+                  height: 46,
+                  icon: CupertinoIcons.refresh_bold,
+                  fontSize: 14,
+                  onTap: () {},
                 ),
               ],
             ),

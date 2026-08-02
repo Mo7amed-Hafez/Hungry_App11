@@ -1,10 +1,9 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hungry_app/core/constants/app_colors.dart';
 import 'package:hungry_app/shared/custom_text.dart';
 
 class FoodCategory extends StatefulWidget {
-  FoodCategory({
+  const FoodCategory({
     super.key,
     required this.selectedIndex,
     required this.categories,
@@ -28,31 +27,53 @@ class _FoodCategoryState extends State<FoodCategory> {
 
   @override
   Widget build(BuildContext context) {
-    // قائمة الفئات الغذائية
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
+      physics: const BouncingScrollPhysics(),
       child: Row(
-        children: List.generate(widget.categories.length, (imdex) {
+        children: List.generate(widget.categories.length, (index) {
+          final isSelected = selectedIndex == index;
+
           return GestureDetector(
             onTap: () {
-              selectedIndex = imdex;
-              setState(() {});
+              setState(() {
+                selectedIndex = index;
+              });
             },
-            child: Container(
-              margin: EdgeInsets.only(right: 10),
-              padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 250),
+              curve: Curves.easeInOut,
+              margin: const EdgeInsets.only(right: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 12),
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(22),
-                color: selectedIndex == imdex
-                    ? AppColors.primaryColor
-                    : Color.fromARGB(255, 223, 230, 243),
+                borderRadius: BorderRadius.circular(24),
+                color: isSelected ? AppColors.primaryColor : Colors.white,
+                gradient: isSelected ? AppColors.primaryGradient : null,
+                border: Border.all(
+                  color: isSelected ? Colors.transparent : AppColors.borderLight,
+                  width: 1.5,
+                ),
+                boxShadow: isSelected
+                    ? [
+                        BoxShadow(
+                          color: AppColors.primaryColor.withValues(alpha: 0.25),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ]
+                    : [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.02),
+                          blurRadius: 6,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
               ),
-              height: 60,
               child: CustomText(
-                text: widget.categories[imdex],
-                color: selectedIndex == imdex ? Colors.white : Colors.black38,
-                fontSize: 20,
-                fontWeight: FontWeight.w700,
+                text: widget.categories[index],
+                color: isSelected ? Colors.white : AppColors.textSecondary,
+                fontSize: 14,
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
               ),
             ),
           );

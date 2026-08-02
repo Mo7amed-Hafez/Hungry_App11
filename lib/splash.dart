@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
 import 'package:hungry_app/core/constants/app_colors.dart';
+import 'package:hungry_app/core/constants/app_stringes.dart';
 import 'package:hungry_app/core/utils/pref_helpers.dart';
 import 'package:hungry_app/features/auth/data/auth_repository.dart';
 import 'package:hungry_app/features/auth/views/login_view.dart';
 import 'package:hungry_app/root.dart';
+import 'package:hungry_app/shared/custom_text.dart';
 
 class SplashView extends StatefulWidget {
   const SplashView({super.key});
@@ -33,68 +35,61 @@ class _SplashViewState extends State<SplashView>
   void initState() {
     super.initState();
 
-    // 🎬 Animations
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1200),
     );
 
-    _fadeAnimation =
-        CurvedAnimation(parent: _controller, curve: Curves.easeIn);
+    _fadeAnimation = CurvedAnimation(parent: _controller, curve: Curves.easeIn);
 
     _scaleAnimation = Tween<double>(
-      begin: 0.8,
+      begin: 0.85,
       end: 1.0,
     ).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeOutBack),
     );
 
     _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.3),
+      begin: const Offset(0, 0.2),
       end: Offset.zero,
     ).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOut),
+      CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic),
     );
 
     _controller.forward();
 
-    // ⏳ بعد 3 ثواني
-    Future.delayed(const Duration(seconds: 3),
-      _checkLogin);
+    Future.delayed(const Duration(seconds: 3), _checkLogin);
   }
 
-  // 🔥 Auto Login Logic
   Future<void> _checkLogin() async {
     try {
-      // ⛔ لو الصفحة اتقفلت متكملش
       if (!mounted) return;
 
-      // 🟢 جيب التوكن الأول
       final token = await PrefHelpers.getToken();
-      print("TOKEN => $token");
 
-      // 🧠 تحديد الوجهة
       Widget nextScreen;
 
       if (authRepo.isGuest) {
-        nextScreen =  Root();
+        nextScreen = Root();
       } else if (token != null) {
-        nextScreen =  Root();
+        nextScreen = Root();
       } else {
         nextScreen = const LoginView();
       }
 
-      // 🔁 Navigation
       if (mounted) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (_) => nextScreen),
+          PageRouteBuilder(
+            transitionDuration: const Duration(milliseconds: 600),
+            pageBuilder: (_, animation, __) => FadeTransition(
+              opacity: animation,
+              child: nextScreen,
+            ),
+          ),
         );
       }
-    } catch (e) {
-      print("Error in Splash => ${e.toString()}");
-
-      // fallback لو حصل error
+    } catch (_) {
       if (mounted) {
         Navigator.pushReplacement(
           context,
@@ -106,41 +101,92 @@ class _SplashViewState extends State<SplashView>
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+
     return Scaffold(
-      backgroundColor: AppColors.primaryColor,
-      body: Center(
-        child: Column(
-          children: [
-            const Gap(200),
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: const BoxDecoration(
+          gradient: AppColors.primaryGradient,
+        ),
+        child: SafeArea(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Gap(40),
 
-            /// 🔷 Logo Animation
-            FadeTransition(
-              opacity: _fadeAnimation,
-              child: ScaleTransition(
-                scale: _scaleAnimation,
-                child: SvgPicture.asset(
-                  "assets/images/logo.svg",
-                  width: MediaQuery.of(context).size.width * 0.7,
-                ),
-              ),
-            ),
-
-            const Spacer(),
-
-            /// 🔷 Bottom Image Animation
-            SlideTransition(
-              position: _slideAnimation,
-              child: FadeTransition(
+              /// Logo & Slogan Animation
+              FadeTransition(
                 opacity: _fadeAnimation,
-                child: Image.asset(
-                  "assets/images/splach.png",
-                  width: MediaQuery.of(context).size.width * 0.9,
+                child: ScaleTransition(
+                  scale: _scaleAnimation,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.white.withValues(alpha: 0.08),
+                          border: Border.all(
+                            color: Colors.white.withValues(alpha: 0.15),
+                            width: 1.5,
+                          ),
+                        ),
+                        child: SvgPicture.asset(
+                          AppStringes.logo,
+                          width: size.width * 0.7,
+                          colorFilter: const ColorFilter.mode(
+                            Colors.white,
+                            BlendMode.srcIn,
+                          ),
+                        ),
+                      ),
+                      const Gap(16),
+                      CustomText(
+                        text: "Delicious Food Delivered Fast",
+                        fontSize: 16,
+                        color: Colors.white.withValues(alpha: 0.85),
+                        fontWeight: FontWeight.w400,
+                        letterSpacing: 0.8,
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
 
-            const Gap(40),
-          ],
+              /// Bottom Image Animation & Loading Indicator
+              SlideTransition(
+                position: _slideAnimation,
+                child: FadeTransition(
+                  opacity: _fadeAnimation,
+                  child: Column(
+                    children: [
+                      Image.asset(
+                        "assets/images/splach.png",
+                        width: size.width * 0.85,
+                        fit: BoxFit.contain,
+                      ),
+                      const Gap(24),
+                      SizedBox(
+                        width: 40,
+                        height: 3,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(2),
+                          child: const LinearProgressIndicator(
+                            color: Colors.white,
+                            backgroundColor: Colors.white24,
+                          ),
+                        ),
+                      ),
+                      const Gap(20),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

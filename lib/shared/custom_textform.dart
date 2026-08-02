@@ -8,27 +8,30 @@ class CustomTextform extends StatefulWidget {
     required this.controller,
     required this.isPassword,
     required this.hint,
+    this.prefixIcon,
   });
 
   final TextEditingController controller;
   final bool isPassword;
   final String hint;
+  final IconData? prefixIcon;
 
   @override
   State<CustomTextform> createState() => _CustomTextformState();
 }
 
 class _CustomTextformState extends State<CustomTextform> {
-  late bool _obsacureText;
+  late bool _obscureText;
 
-  initState() {
+  @override
+  void initState() {
     super.initState();
-    _obsacureText = widget.isPassword;
+    _obscureText = widget.isPassword;
   }
 
   void _toggleObscureText() {
     setState(() {
-      _obsacureText = !_obsacureText;
+      _obscureText = !_obscureText;
     });
   }
 
@@ -38,33 +41,57 @@ class _CustomTextformState extends State<CustomTextform> {
       controller: widget.controller,
       cursorColor: AppColors.primaryColor,
       cursorHeight: 20,
-      // ignore: body_might_complete_normally_nullable
+      style: const TextStyle(
+        fontSize: 15,
+        fontWeight: FontWeight.w500,
+        color: AppColors.textPrimary,
+      ),
       validator: (v) {
-        if (v == null || v.isEmpty) {
+        if (v == null || v.trim().isEmpty) {
           return "Please enter ${widget.hint}";
         }
+        return null;
       },
-      obscureText: _obsacureText,
+      obscureText: _obscureText,
       decoration: InputDecoration(
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide(color: AppColors.primaryColor, width: 2),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+        filled: true,
+        fillColor: const Color(0xFFF6F7F9),
+        hintText: widget.hint,
+        hintStyle: const TextStyle(
+          color: AppColors.textMuted,
+          fontSize: 15,
+          fontWeight: FontWeight.w400,
         ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide(color: AppColors.primaryColor, width: 2),
-        ),
+        prefixIcon: widget.prefixIcon != null
+            ? Icon(widget.prefixIcon, color: AppColors.primaryColor.withValues(alpha: 0.7), size: 20)
+            : null,
         suffixIcon: widget.isPassword
-            ? GestureDetector(
-                onTap: _toggleObscureText,
-                child: Icon(CupertinoIcons.eye,color: AppColors.primaryColor),
+            ? IconButton(
+                onPressed: _toggleObscureText,
+                icon: Icon(
+                  _obscureText ? CupertinoIcons.eye : CupertinoIcons.eye_slash,
+                  color: AppColors.primaryColor,
+                  size: 20,
+                ),
               )
             : null,
-
-        filled: true,
-        fillColor: Colors.transparent,
-        hintText: widget.hint,
-        hintStyle: TextStyle(color: AppColors.primaryColor),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: const BorderSide(color: Color.fromARGB(255, 107, 172, 228), width: 1.5),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: const BorderSide(color: AppColors.primaryColor, width: 2),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: const BorderSide(color: AppColors.error, width: 1.5),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: const BorderSide(color: AppColors.error, width: 2),
+        ),
       ),
     );
   }

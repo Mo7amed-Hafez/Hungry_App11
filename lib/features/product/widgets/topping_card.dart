@@ -1,8 +1,9 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:gap/gap.dart';
+import 'package:hungry_app/core/constants/app_colors.dart';
 import 'package:hungry_app/shared/custom_text.dart';
 
-class ToppingCard extends StatelessWidget {
+class ToppingCard extends StatefulWidget {
   const ToppingCard({
     super.key,
     required this.imageUrl,
@@ -12,65 +13,90 @@ class ToppingCard extends StatelessWidget {
 
   final String imageUrl;
   final String title;
-  final Function() addToCart;
+  final VoidCallback addToCart;
+
+  @override
+  State<ToppingCard> createState() => _ToppingCardState();
+}
+
+class _ToppingCardState extends State<ToppingCard> {
+  bool isAdded = false;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 170,
-      width: 140,
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 200),
+      height: 160,
+      width: 125,
+      padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: Colors.brown.shade500,
-        borderRadius: BorderRadius.circular(25),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: isAdded ? AppColors.primaryColor : AppColors.borderLight,
+          width: isAdded ? 2 : 1.5,
+        ),
         boxShadow: [
-          // BoxShadow(
-          //   color: Colors.grey.shade600,
-          //   blurRadius: 3,
-          //   offset: Offset(5, 5),
-          // ),
           BoxShadow(
-            color: const Color.fromARGB(255, 100, 17, 17),
-            blurRadius: 6,
-            offset: Offset(5, 5),
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          /// Image Container
           Container(
-            height: 100,
-            width: 140,
-            padding: EdgeInsets.all(5),
+            height: 75,
+            width: double.infinity,
+            padding: const EdgeInsets.all(6),
             decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(25),
+              color: AppColors.primarySoft,
+              borderRadius: BorderRadius.circular(14),
             ),
-      
-            child: Image.asset(imageUrl, fit: BoxFit.cover),
+            child: Image.asset(
+              widget.imageUrl,
+              fit: BoxFit.contain,
+            ),
           ),
-      
-          // title and add to add button
-          Spacer(),
-      
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Gap(2),
-                CustomText(text: title, fontSize: 19, color: Colors.white),
-      
-                IconButton(
-                  onPressed: addToCart,
-                  icon: Icon(
-                    Icons.add_circle_outlined,
-                    size: 30,
-                    color: Colors.red,
+          const Spacer(),
+
+          /// Title & Add Button
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: CustomText(
+                  text: widget.title,
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.textPrimary,
+                  maxLines: 1,
+                ),
+              ),
+              GestureDetector(
+                onTap: () {
+                  setState(() {
+                    isAdded = !isAdded;
+                  });
+                  widget.addToCart();
+                },
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  padding: const EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    color: isAdded ? AppColors.primaryColor : AppColors.primarySoft,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Icon(
+                    isAdded ? CupertinoIcons.checkmark : CupertinoIcons.add,
+                    size: 14,
+                    color: isAdded ? Colors.white : AppColors.primaryColor,
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ],
       ),

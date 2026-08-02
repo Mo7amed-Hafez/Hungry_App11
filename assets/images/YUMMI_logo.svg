@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="256" height="46" viewBox="0 0 256 46">
+  <!-- Transparent background -->
+  <text x="128"
+        y="23"
+        text-anchor="middle"
+        dominant-baseline="middle"
+        fill="#FFFFFF"
+        font-family="Baloo 2, Fredoka, Quicksand, Arial Rounded MT Bold, sans-serif"
+        font-size="30"
+        font-weight="700"
+        letter-spacing="0.5">
+    YUMMI
+  </text>
+</svg>
