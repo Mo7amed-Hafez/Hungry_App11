@@ -44,7 +44,7 @@ class _SingnupViewState extends State<SingnupView> {
       if (!mounted) return;
 
       if (user != null) {
-        Navigator.pushReplacementNamed(context, '/root');
+        Navigator.pushReplacementNamed(context, '/login');
       }
     } catch (e) {
       if (!mounted) return;

@@ -1,61 +1,269 @@
-# hungry_app
+# 🍔 YUMMI - Modern Food Ordering App
 
-A new Flutter project.
+<div align="center">
 
-## Getting Started
+<img src="assets/images/logooo.png" width="170"/>
 
-This project is a starting point for a Flutter application.
+### *A Modern Flutter Food Ordering Experience*
 
-A few resources to get you started if this is your first Flutter project:
+A beautifully crafted food ordering application built with **Flutter**, featuring a clean architecture, responsive UI, REST API integration, and a seamless user experience.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+![Flutter](https://img.shields.io/badge/Flutter-3.x-02569B?style=for-the-badge\&logo=flutter)
+![Dart](https://img.shields.io/badge/Dart-3.x-0175C2?style=for-the-badge\&logo=dart)
+![Platform](https://img.shields.io/badge/Android%20%7C%20iOS-Supported-success?style=for-the-badge)
+![Architecture](https://img.shields.io/badge/Architecture-MVC-orange?style=for-the-badge)
+![REST API](https://img.shields.io/badge/API-REST-blue?style=for-the-badge)
+![Status](https://img.shields.io/badge/Status-Under%20Development-yellow?style=for-the-badge)
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+</div>
 
+---
 
-هنا كل ما يخص الكود و تنظيم الملفات و الاكواد 
-file structure
+# 📖 About
 
-lib/
- core/  
-  constants/
-  api_endpoints.dart
-  app_colors.dart
-  app_stringes.dart
+**YUMMI** is a modern food ordering application developed using **Flutter** and **Dart**.
 
- network/
-  api_service.dart
-  api_exceptions.dart
+The application aims to deliver a smooth, responsive, and intuitive food ordering experience by combining a clean user interface with efficient REST API communication.
 
- utils/
-  helpers.dart
-  validators.dart
+Users can explore food categories, search meals, manage their favorites, add products to the shopping cart, and place orders through an elegant mobile interface.
 
- features/
-  food/
+The project is currently under active development, with additional features and improvements planned for future releases.
 
-   1 data/
-    food_model.dart
-    food_repository.dart
+---
 
+# ✨ Features
 
-  2 view/
-    food_list_view.dart
-    food_detail_view.dart
+## 🔐 Authentication
 
+* User Registration
+* Secure Login
+* Logout
+* Session Management
+* Form Validation
 
-  3 widgets/
-     food_card.dart
+---
 
-   4 cubit 
-     هنا فيما بعد ممكن تضيف State Mangement
-     لكن في المشروع دا مش هيكون فيه 
+## 🍔 Home
 
-     في كل feature هيكون فيه من 1 2 3 اساسي 
+* Featured Meals
+* Popular Foods
+* Categories
+* Responsive Layout
 
-splash.dart
-root.dart
-main.dart
+---
+
+## 🔍 Search
+
+* Search Foods
+* Instant Results
+* Clean Search Interface
+
+---
+
+## 🍕 Food Details
+
+* Food Images
+* Description
+* Price
+* Category
+* Add to Cart
+* Add to Favorites
+
+---
+
+## ❤️ Favorites
+
+* Save Favorite Meals
+* Remove Favorites
+* Quick Access
+
+---
+
+## 🛒 Shopping Cart
+
+* Add Products
+* Remove Products
+* Update Quantity
+* Total Price Calculation
+
+---
+
+## 💳 Checkout
+
+* Review Order
+* Order Summary
+* Checkout Flow
+
+---
+
+## 👤 Profile
+
+* User Information
+* Account Details
+* Future Profile Management
+
+---
+
+# 📱 Screens
+
+Current Screens:
+
+* Splash
+* Login
+* Register
+* Home
+* Categories
+* Search
+* Product Details
+* Favorites
+* Cart
+* Checkout
+* Profile
+
+> Screenshots will be added soon.
+
+---
+
+# 🏗 Architecture
+
+The project follows the **MVC (Model – View – Controller)** architecture.
+
+```text
+lib
+│
+├── core
+│
+├── features
+│
+├── shared
+│
+└── main.dart
+```
+
+The architecture separates:
+
+* Business Logic
+* UI
+* API Layer
+* Models
+
+making the project easier to maintain and extend.
+
+---
+
+# 📦 Tech Stack
+
+| Technology         | Usage                      |
+| ------------------ | -------------------------- |
+| Flutter            | Cross-platform Development |
+| Dart               | Programming Language       |
+| REST API           | Backend Communication      |
+| Dio                | Network Requests           |
+| Shared Preferences | Local Storage              |
+| MVC                | Project Architecture       |
+
+---
+
+# 🌐 API Integration
+
+The application communicates with REST APIs to provide:
+
+* Authentication
+* Food Categories
+* Meals
+* Search
+* Cart Operations
+* User Data
+
+---
+
+# 📂 Project Highlights
+
+* Clean Folder Structure
+* Reusable Widgets
+* Responsive Design
+* Modern UI
+* REST API Integration
+* Loading States
+* Error Handling
+* Token Authentication
+* Code Reusability
+* Beginner-Friendly Architecture
+
+---
+
+## 📈 Project Vision
+
+YUMMI is designed as a flexible and customizable food ordering solution.
+
+The application can be easily adapted to match different restaurant brands, including their identity, menu, colors, categories, and business requirements.
+
+Whether it's a fast-food restaurant, café, bakery, pizza shop, seafood restaurant, or any other food business, the application can be customized to provide a unique experience tailored to the client's needs.
+
+Its modular architecture makes it easy to extend, maintain, and integrate additional features as business requirements evolve.
+
+---
+
+## Planned Customization Options
+
+- 🎨 Brand Colors & Theme
+- 🏷️ Restaurant Logo & Identity
+- 🍽️ Dynamic Menu Categories
+- 📍 Restaurant Information
+- 💳 Payment Integration
+- 🚚 Delivery Options
+- 🌐 Multi-language Support
+- 📲 Push Notifications
+- ⭐ Customer Reviews
+- 🎟️ Offers & Discount Coupons
+- 📊 Analytics Dashboard Integration
+
+---
+
+# 🤝 Contributing
+
+Contributions, ideas, and suggestions are always welcome.
+
+Feel free to fork this repository, create a feature branch, and submit a Pull Request.
+
+---
+
+# 👨‍💻 Developer
+
+### Mohamed Hafez
+
+Flutter Developer
+
+* 💼 Passionate about Flutter Development
+* 📱 Mobile Application Developer
+* 🎯 Interested in Building Modern Applications
+
+**Portfolio**
+
+https://mafia-portfolio.vercel.app/
+
+**LinkedIn**
+
+https://www.linkedin.com/in/mohamed-hafez-997833207/
+
+**GitHub**
+
+https://github.com/Mo7amed-Hafez
+
+---
+
+# ⭐ Support
+
+If you found this project useful, consider giving it a **Star ⭐**.
+
+It helps support the project and encourages future improvements.
+
+---
+
+<div align="center">
+
+### Made with ❤️ using Flutter
+
+**YUMMI © 2026**
+
+</div>

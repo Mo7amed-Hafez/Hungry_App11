@@ -124,24 +124,9 @@ class _SplashViewState extends State<SplashView>
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Container(
-                        padding: const EdgeInsets.all(20),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.white.withValues(alpha: 0.08),
-                          border: Border.all(
-                            color: Colors.white.withValues(alpha: 0.15),
-                            width: 1.5,
-                          ),
-                        ),
-                        child: SvgPicture.asset(
-                          AppStringes.logo,
-                          width: size.width * 0.7,
-                          colorFilter: const ColorFilter.mode(
-                            Colors.white,
-                            BlendMode.srcIn,
-                          ),
-                        ),
+                      Image.asset(
+                        AppStringes.logo,
+                        width: size.width * 0.8,
                       ),
                       const Gap(16),
                       CustomText(

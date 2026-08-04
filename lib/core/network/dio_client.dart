@@ -1,10 +1,12 @@
 import 'package:dio/dio.dart';
+import 'package:hungry_app/core/constants/api_endpoints.dart';
 import 'package:hungry_app/core/utils/pref_helpers.dart';
 
 class DioClient {
   final dio = Dio(
     BaseOptions(
-      baseUrl: "https://sonic-zdi0.onrender.com/api",
+      // baseUrl: "https://sonic-zdi0.onrender.com/api",
+      baseUrl: ApiEndpoints.baseUrl,
 
       //   connectTimeout: const Duration(seconds: 3),
       //   receiveTimeout: const Duration(seconds: 3),

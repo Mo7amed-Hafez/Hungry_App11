@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:hungry_app/core/constants/app_colors.dart';
 import 'package:hungry_app/core/constants/app_stringes.dart';
 import 'package:hungry_app/shared/custom_text.dart';
@@ -24,15 +23,20 @@ class _UserHeaderState extends State<UserHeader> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SvgPicture.asset(
-                AppStringes.logo,
+              Image.asset(
+                AppStringes.logo2,
                 width: size.width * 0.45,
-                alignment: Alignment.centerLeft,
-                colorFilter: const ColorFilter.mode(
-                  AppColors.primaryColor,
-                  BlendMode.srcIn,
-                ),
               ),
+              // SvgPicture.asset(
+              //   AppStringes.logo,
+              //   width: size.width * 0.45,
+              //   height: 40,
+              //   alignment: Alignment.centerLeft,
+              //   colorFilter: const ColorFilter.mode(
+              //     AppColors.primaryColor,
+              //     BlendMode.srcIn,
+              //   ),
+              // ),
               const SizedBox(height: 6),
               Row(
                 children: const [
